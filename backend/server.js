@@ -16,26 +16,40 @@ const PORT = 3001;
 const DATABASE_USER = {
   username: 'globant',
   password: '123',
-  organization: 'globant',
-  site: 'lima',
-  topic: 'jwt talk'
+  organization: 'Globant',
+  site: 'Lima',
+  topic: 'JWT Talk',
+  firstname: 'Juan',
+  lastname: 'Vento'
 };
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+
+// morgan is our request logger middleware
 app.use(morgan('tiny'));
 
-app.get('/random-user', function(req, res) {
-  const user = faker.helpers.userCard();
-  user.avatar = faker.image.avatar();
-  res.json(user);
+// enable CORS in our express server
+app.use(cors());
+
+// bodyParser parse incoming request´s body
+app.use(bodyParser.json());
+
+// expressJwt validate that the HTTP request has the JWT token
+app.use(expressJwt({ secret: JWT_SECRET }).unless({ path: [ '/login' ]}));
+
+// unauthorized error handler function
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send({ message: err.message });
+  }
 });
 
 app.post('/login', authenticate, function(req, res) {
+  const { username, organization, site } = DATABASE_USER;
+
   // jwt.sign(payload, secretOrPrivateKey, [options, callback])
   // default algorithm (HMAC SHA256)
-  const { username, organization, site } = DATABASE_USER;
+  // returns the JsonWebToken as string
   const token = jwt.sign({
     username,
     organization,
@@ -46,6 +60,12 @@ app.post('/login', authenticate, function(req, res) {
     token,
     user: DATABASE_USER
   });
+});
+
+app.get('/random-user', function(req, res) {
+  const user = faker.helpers.userCard();
+  user.avatar = faker.image.avatar();
+  res.json(user);
 });
 
 function authenticate(req, res, next) {
@@ -61,6 +81,6 @@ function authenticate(req, res, next) {
 }
 
 app.listen(PORT, HOST, function() {
-  console.log(`listening on ${HOST}:${PORT}`);
+  console.log(`Auth server listening on ${HOST}:${PORT}`);
 });
 

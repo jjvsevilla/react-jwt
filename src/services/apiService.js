@@ -1,20 +1,30 @@
+import authService from './authService';
+
 const SERVER_URL = 'http://localhost:3001';
 const RANDOM_USER_API = `${SERVER_URL}/random-user`;
 const LOGIN_API = `${SERVER_URL}/login`;
 
-export function getRandomUser() {
-  return fetch(RANDOM_USER_API).then(handleErrors);
+export function login(username, password) {
+  const payload = JSON.stringify({ username, password });
+  return fetch(LOGIN_API, {
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+    body: payload
+  }).then(handleResponse);
 }
 
-export function login(username, password) {
-  const data = { username, password };
-  return fetch(LOGIN_API, {
-    headers: {
-      'content-type': 'application/json'
-    },
-    method: 'POST',
-    body: JSON.stringify(data)
-  }).then(handleResponse);
+export function logout() {
+  authService.setToken();
+}
+
+export function getRandomUser() {
+  const token = authService.getToken();
+  const options = {}
+  if (token) {
+    options.headers = {};
+    options.headers.Authorization = 'Bearer ' + token;
+  }
+  return fetch(RANDOM_USER_API, options).then(handleResponse);
 }
 
 function handleResponse(response) {

@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "backend": "nodemon backend/server.js --exec babel-node"
+    "server": "nodemon backend/server.js --exec babel-node"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
