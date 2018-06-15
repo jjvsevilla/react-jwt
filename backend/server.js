@@ -68,6 +68,12 @@ app.get('/random-user', function(req, res) {
   res.json(user);
 });
 
+app.get('/me', function (req, res) {
+  res.status(200).send({
+    user: DATABASE_USER
+  });
+});
+
 function authenticate(req, res, next) {
   const { body } = req;
   if (!body.username || !body.password) {

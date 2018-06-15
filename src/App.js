@@ -13,10 +13,18 @@ class App extends Component {
   state = {
     username: '',
     password: '',
-    token: null,
     user: null,
     result: null,
     error: null
+  }
+
+  componentDidMount() {
+    apiService.getUser()
+      .then(response => {
+        if (response) {
+          this.setState({ user: response.user });
+        }
+      })
   }
 
   handleChange = (event) => {
@@ -31,7 +39,7 @@ class App extends Component {
     apiService.login(username, password)
       .then(response => {
         authService.setToken(response.token);
-        this.setState({ token: response.token, user: response.user });
+        this.setState({ user: response.user });
       })
       .catch((err) => {
         this.setState({ error: err });
@@ -40,7 +48,7 @@ class App extends Component {
 
   handleLogout = () => {
     authService.setToken();
-    this.setState({ token: null, user: null, username: '', password: '' });
+    this.setState({ user: null, username: '', password: '' });
   }
 
   getUser = () => {

@@ -1,26 +1,28 @@
-## configuring frontend server
-	npm i -g create-react-app
-	create-react-app react-jwt
-	cd react-jwt
-	npm start
+## Frontend modules
+> npm i -g create-react-app
 
-http://localhost:3000
+## Backend modules
+> npm i -D babel-cli
+> npm i -D babel-preset-es2015 babel-preset-stage-2
+> npm i -D nodemon
+> npm i cors
+> npm i morgan
+> npm i body-parser
+> npm i jsonwebtoken
+> npm i express-jwt
 
-## configuring backend server
-	npm i -D babel-cli
-	npm i -D babel-preset-es2015 babel-preset-stage-2
-	npm i -D nodemon
+## Launch Backend server
+`npm run server`
 
-http://localhost:3001/random-user
+## Launch Frontend server
+`npm start`
 
-create express server
-	"backend": "cd backend/ && nodemon server.js"
+## Backend server APIs
+- [x] POST
+> http://localhost:3001/login
+- [x] GET
+> http://localhost:3001/random-user
 
-add logic for call api from the react component
+## Frontend url
+> http://localhost:3000
 
-install middlewares
-	npm i cors
-	npm i morgan
-	npm i body-parser
-	npm i jsonwebtoken
-	npm i express-jwt
