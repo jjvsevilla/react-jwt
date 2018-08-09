@@ -19,11 +19,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-    apiService.getUser()
+    apiService.getLoggedUser()
       .then(response => {
         if (response) {
           this.setState({ user: response.user });
         }
+      })
+      .catch((err) => {
+        this.setState({ error: err });
       })
   }
 
@@ -38,7 +41,7 @@ class App extends Component {
     this.setState({ error: null });
     apiService.login(username, password)
       .then(response => {
-        authService.setToken(response.token);
+        authService.setToken(response.access_token);
         this.setState({ user: response.user });
       })
       .catch((err) => {
@@ -51,7 +54,20 @@ class App extends Component {
     this.setState({ user: null, username: '', password: '' });
   }
 
-  getUser = () => {
+  handleWrongApi = () => {
+    this.setState({ error: null });
+    apiService.callWrongEndpoint()
+      .then(response => {
+        console.log('handleWrongApi', response)
+      })
+      .catch((err) => {
+        this.setState({ error: err });
+      })
+  }
+
+  getRandomUser = (event) => {
+    event.preventDefault();
+    this.setState({ error: null });
     apiService.getRandomUser()
       .then(user => this.setState({ result: user }))
       .catch((err) => {
@@ -82,10 +98,9 @@ class App extends Component {
               </div>
               <div className="field">
                 <input type="submit" value="Login" />
+                <button onClick={this.getRandomUser}>Get Random User</button>
               </div>
             </form>
-
-            {error && <p className="form-error">{error.message}</p>}
 
             <div className="api-result">
               <pre>{JSON.stringify(CREDENTIALS, undefined, 2)}</pre>
@@ -98,7 +113,8 @@ class App extends Component {
           <p>Welcome {user.firstname} {user.lastname}</p>
 
           <div className="options-wrapper">
-            <button onClick={this.getUser}>Get Random User</button>
+            <button onClick={this.getRandomUser}>Get Random User</button>
+            <button onClick={this.handleWrongApi}>Execute Wrong Api</button>
             <button onClick={this.handleLogout}>Logout</button>
           </div>
 
@@ -107,6 +123,9 @@ class App extends Component {
             <pre>{JSON.stringify(result, undefined, 2)}</pre>
           </div>}
         </div>}
+
+        {error && <p className="form-error">{error.message}</p>}
+
       </div>
     );
   }
